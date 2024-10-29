@@ -5,13 +5,6 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "C:\\Users\\liusq\\.ohos\\config\\default_ApiExample_cRm2rE6vj11-0__xRwH1uaRo9Dy-QOnxa25Y6eBEuRY=.cer",
-          "storePassword": "0000001BB9D92DD391690565AA91C5EFCFF07E662622F0D86375629628F0D216C5303635A2FE03FE8F2546",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001B7DA83954C643FA9FC44902B09A3AAB73CFF37B010166CDCCB3147BD8177B8C6DB48315C50444FE",
-          "profile": "C:\\Users\\liusq\\.ohos\\config\\default_ApiExample_cRm2rE6vj11-0__xRwH1uaRo9Dy-QOnxa25Y6eBEuRY=.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "C:\\Users\\liusq\\.ohos\\config\\default_ApiExample_cRm2rE6vj11-0__xRwH1uaRo9Dy-QOnxa25Y6eBEuRY=.p12"
         }
       }
     ],
