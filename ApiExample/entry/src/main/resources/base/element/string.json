@@ -1,0 +1,32 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "ApiExample"
+    },
+    {
+      "name": "file_reason",
+      "value": "for log collection"
+    },
+    {
+      "name": "network",
+      "value": "request network"
+    },
+    {
+      "name": "mic_reason",
+      "value": "for audio collection"
+    },
+    {
+      "name": "camera_reason",
+      "value": "for video collection"
+    }
+  ]
+}
