@@ -116,8 +116,8 @@ QNRTCKit 是七牛推出的一款适用于 HarmonyOS 平台的音视频通话 SD
 
 # 6 开发文档
 
-- 可通过 [QNRTCKit 快速入门](https://developer.qiniu.com/rtc/12831/quick_start-HarmonyOS) 了解如何快速搭建音视频通话应用
-- 可通过 [QNRTCKit 使用指南](https://developer.qiniu.com/rtc/12837/development_guidelines-HarmonyOS) 了解不同场景的实现方式
+- 可通过 [QNRTCKit 快速入门](https://developer.qiniu.com/rtc/12832/sdk_overview-HarmonyOS) 了解如何快速搭建音视频通话应用
+- 可通过 [QNRTCKit 使用指南](https://developer.qiniu.com/rtc/12838/initialization-HarmonyOS) 了解不同场景的实现方式
 - 可通过 [QNRTCKit API 概览](https://developer.qiniu.com/rtc/12830/ApiGuide-HarmonyOS) 了解 SDK 的接口设计及使用姿势
 
 # 7 反馈及意见
