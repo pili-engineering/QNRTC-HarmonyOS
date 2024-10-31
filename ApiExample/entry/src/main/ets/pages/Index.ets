@@ -50,6 +50,7 @@ struct Index {
   itemTitleSize: number = 15
   titleBackgroundColor: ResourceColor = '#fff0f0f0'
   egDivider: DividerList = new DividerList(1, 10, 10, '#ffd0d0d0')
+  private pushClicked : boolean = false;
   token: string = ""
 
   aboutToAppear(): void {
@@ -59,7 +60,7 @@ struct Index {
       didShow: (from: NavDestinationContext | "navBar", to: NavDestinationContext | "navBar",
         operation: NavigationOperation, animated: boolean) => {
         if (operation == NavigationOperation.POP) {
-
+          this.pushClicked = false;
         }
       }
     })
@@ -85,7 +86,11 @@ struct Index {
       }
     }.padding(5)
     .onClick(() => {
+      if (this.pushClicked){
+        return;
+      }
       if (this.token) {
+        this.pushClicked = true;
         this.pathStack.pushPathByName(pathName, this.token);
       } else {
         prompt.showToast({

@@ -42,17 +42,20 @@ export struct CameraVideoExample {
   private cameraTrack: QNCameraVideoTrack | null = null;
   private localRenderComponentCtrl: QNComponentController = new QNComponentController();
   private remoteRenderComponentCtrl: QNComponentController = new QNComponentController();
+  private connectionState: QNConnectionState = QNConnectionState.Disconnected;
   @State localRendervisibility: Visibility = Visibility.Hidden;
   @State remoteRendervisibility: Visibility = Visibility.Hidden;
-
   private clientListener: QNClientEventListener = {
     OnConnectionStateChanged: (state: QNConnectionState, info: QNConnectionDisconnectedInfo) => {
+      this.connectionState = state;
       if (state == QNConnectionState.Connected) {
         // set local render
         this.cameraTrack!.Play(this.localRenderComponentCtrl);
         this.localRendervisibility = Visibility.Visible;
         // publish local tracks
-        this.client!.Publish(this.localTracks, null);
+        if (this.client) {
+          this.client.Publish(this.localTracks, null);
+        }
       }
     },
     OnSubscribed: (userid: string, remoteAudioTrackList: QNRemoteAudioTrack[],
@@ -90,7 +93,9 @@ export struct CameraVideoExample {
   }
 
   aboutToDisappear(): void {
-    this.client!.Leave();
+    if (this.client && this.connectionState == QNConnectionState.Connected) {
+      this.client!.Leave();
+    }
     QNRTC.DeInit();
   }
 
@@ -114,6 +119,13 @@ export struct CameraVideoExample {
     videoTrackConfig.encoderConfig = videoEncodeConfig;
     videoTrackConfig.captureConfig = videoCaptureConfig;
     this.cameraTrack = QNRTC.CreateCameraVideoTrack(videoTrackConfig)
+    // set local track
+    if (this.micTrack) {
+      this.localTracks.push(this.micTrack);
+    }
+    if (this.cameraTrack) {
+      this.localTracks.push(this.cameraTrack);
+    }
   }
 
   join(): void {
