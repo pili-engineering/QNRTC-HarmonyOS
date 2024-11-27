@@ -19,7 +19,9 @@ import {
   QNConnectionDisconnectedInfo,
   QNVideoCaptureConfig,
   QNVideoEncoderConfig,
-  QNComponentController
+  QNComponentController,
+  QNStretchMode,
+  QNCustomMessage
 } from 'qnrtckit'
 
 @Styles
@@ -50,7 +52,7 @@ export struct CameraVideoExample {
       this.connectionState = state;
       if (state == QNConnectionState.Connected) {
         // set local render
-        this.cameraTrack!.Play(this.localRenderComponentCtrl);
+        this.cameraTrack!.Play(this.localRenderComponentCtrl, QNStretchMode.StretchScaleToFit);
         this.localRendervisibility = Visibility.Visible;
         // publish local tracks
         if (this.client) {
@@ -63,7 +65,7 @@ export struct CameraVideoExample {
       if (remoteVideoTrackList.length) {
         let remoteVideoTrack: QNRemoteVideoTrack = remoteVideoTrackList[0]
         // set remote render
-        remoteVideoTrack.Play(this.remoteRenderComponentCtrl);
+        remoteVideoTrack.Play(this.remoteRenderComponentCtrl, QNStretchMode.StretchScaleToFit);
         this.remoteRendervisibility = Visibility.Visible;
       }
     },
@@ -84,6 +86,9 @@ export struct CameraVideoExample {
     },
     OnUserUnpublished: (remoteUserId: string, remoteTrackList: QNRemoteTrack[]) => {
       console.log("OnUserUnpublished: ", remoteUserId);
+    },
+    OnMessageReceived: (message: QNCustomMessage) => {
+      console.log("OnMessageReceived: ", message);
     }
   }
 
