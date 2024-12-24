@@ -1,12 +1,12 @@
 {
   "name": "entry",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Please describe the basic information.",
   "main": "",
   "author": "",
   "license": "",
   "dependencies": {
-    "qnrtckit": "file:library/qnrtckit.har"
+    "@qiniu/qnrtckit": "file:library/qnrtckit.har"
   },
   "devDependencies": {},
   "dynamicDependencies": {}

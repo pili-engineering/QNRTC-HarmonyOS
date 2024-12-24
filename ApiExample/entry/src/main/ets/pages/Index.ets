@@ -1,9 +1,15 @@
 import { scanCore, scanBarcode } from '@kit.ScanKit';
-import { hilog } from '@kit.PerformanceAnalysisKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { CameraVideoExample } from './video/cameraVideo/CameraVideoExample';
+import { TranscodingLiveDefaultExample } from './cdnStreaming/transcodingLive/TranscodingLiveDefaultExample';
+import { TranscodingLiveCustomExample } from './cdnStreaming/transcodingLive/TranscodingLiveCustomExample';
 import { abilityAccessCtrl, common, Permissions, UIAbility } from '@kit.AbilityKit';
-import prompt from '@ohos.prompt'
+import { DirectLiveStreamingExample } from './cdnStreaming/directLive/DirectLiveStreamingExample';
+import { LengthMetrics, promptAction } from '@kit.ArkUI';
+import { parseToken } from '../common/Utils';
+import { QNRTC } from '@qiniu/qnrtckit';
+import { MediaStatisticsExample } from './others/MediaStatisticsExample';
+import { ScreenSharingExample } from './video/screenSharing/ScreenSharingExample'
 
 class DividerList {
   strokeWidth: Length
@@ -48,10 +54,13 @@ function reqPermissionsFromUser(permissions: Array<Permissions>, context: common
 struct Index {
   @Provide('pathStack') pathStack: NavPathStack = new NavPathStack();
   itemTitleSize: number = 15
-  titleBackgroundColor: ResourceColor = '#fff0f0f0'
   egDivider: DividerList = new DividerList(1, 10, 10, '#ffd0d0d0')
-  private pushClicked : boolean = false;
+  private pushClicked: boolean = false;
   token: string = ""
+  @State roomInfoVisibility: Visibility = Visibility.None
+  @State appID: string = ''
+  @State userID: string = ''
+  @State roomName: string = ''
 
   aboutToAppear(): void {
     const context: common.UIAbilityContext = getContext(this) as common.UIAbilityContext;
@@ -70,10 +79,10 @@ struct Index {
   GroupHead(text: string) {
     Text(text)
       .fontSize(this.itemTitleSize)
-      .backgroundColor(this.titleBackgroundColor)
+      .backgroundColor($r('app.color.title_background'))
       .width('100%')
       .height(40)
-      .padding(5)
+      .padding({ left: 16 })
   }
 
   @Builder
@@ -84,16 +93,16 @@ struct Index {
           Text(title).fontSize(this.itemTitleSize).alignSelf(ItemAlign.Start).width('100%').height('100%')
         }.width('100%').height(40)
       }
-    }.padding(5)
+    }.padding({ left: 16 })
     .onClick(() => {
-      if (this.pushClicked){
+      if (this.pushClicked) {
         return;
       }
       if (this.token) {
         this.pushClicked = true;
         this.pathStack.pushPathByName(pathName, this.token);
       } else {
-        prompt.showToast({
+        promptAction.showToast({
           message: 'Token 为空，请点击扫描获取 Token',
           duration: 2000
         });
@@ -103,10 +112,18 @@ struct Index {
 
   @Builder
   PageMap(name: string) {
-    NavDestination() {
-      if (name == "CameraVideoExample") {
-        CameraVideoExample()
-      }
+    if (name == "CameraVideoExample") {
+      CameraVideoExample()
+    } else if (name == 'DirectLiveStreamingExample') {
+      DirectLiveStreamingExample()
+    } else if (name == 'MediaStatisticsExample') {
+      MediaStatisticsExample()
+    } else if (name == "TranscodingLiveDefaultExample") {
+      TranscodingLiveDefaultExample()
+    } else if (name == "TranscodingLiveCustomExample") {
+      TranscodingLiveCustomExample({roomName: this.roomName})
+    } else if (name == "ScreenSharingExample") {
+      ScreenSharingExample()
     }
   }
 
@@ -131,12 +148,17 @@ struct Index {
               console.info(`Succeeded in getting ScanResult by promise with options, result is ${result.originalValue}`);
               if (result.originalValue) {
                 this.token = result.originalValue
-                prompt.showToast({
+                let roomInfo: object = parseToken(this.token)
+                this.appID = roomInfo?.['appId']
+                this.userID = roomInfo?.['userId']
+                this.roomName = roomInfo?.['roomName']
+                this.roomInfoVisibility = Visibility.Visible
+                promptAction.showToast({
                   message: '获取Token成功，请点击进入相关页面',
                   duration: 2000
                 });
               } else {
-                prompt.showToast({
+                promptAction.showToast({
                   message: '获取Token失败',
                   duration: 2000
                 });
@@ -155,17 +177,46 @@ struct Index {
     Navigation(this.pathStack) {
       List() {
         ListItemGroup({ header: this.GroupHead('视频通话相关') }) {
-          this.ListItemFunc('摄像头采集音视频通话',
-            'CameraVideoExample')
+          this.ListItemFunc('摄像头采集音视频通话', 'CameraVideoExample')
+          this.ListItemFunc('屏幕共享音视频通话', 'ScreenSharingExample')
+        }.margin({ bottom: 5 }).divider(this.egDivider)
+
+        ListItemGroup({ header: this.GroupHead('CDN 直播相关') }) {
+          this.ListItemFunc('CDN 单人转推', 'DirectLiveStreamingExample')
+          this.ListItemFunc('CDN 合流转推（默认合流任务）',
+            'TranscodingLiveDefaultExample')
+          this.ListItemFunc('CDN 合流转推（自定义合流任务）',
+            'TranscodingLiveCustomExample')
+        }.margin({ bottom: 5 }).divider(this.egDivider)
+
+        ListItemGroup({ header: this.GroupHead('其他功能') }) {
+          this.ListItemFunc('通话质量统计', 'MediaStatisticsExample')
         }.margin({ bottom: 5 }).divider(this.egDivider)
       }
       .sticky(StickyStyle.Header)
       .scrollBar(BarState.Auto)
-      .height('95%')
+      .height('85%')
+      .backgroundColor(Color.White)
+
+      Column() {
+        Text(`appID: ${this.appID}`).fontSize(12).width('100%')
+        Text(`用户名: ${this.userID}`).fontSize(12).width('100%')
+        Text(`房间号: ${this.roomName}`).fontSize(12).width('100%')
+        Text(`SDK 版本号: ${QNRTC.GetVersion()}`).fontSize(12).width('100%')
+      }
+      .width('100%')
+      .height('15%')
+      .padding({ left: 24 })
+      .justifyContent(FlexAlign.SpaceEvenly)
+      .visibility(this.roomInfoVisibility)
+      .backgroundColor($r('app.color.title_background'))
     }
     .navDestination(this.PageMap)
     .hideTitleBar(false)
+    .hideBackButton(true)
+    .titleMode(NavigationTitleMode.Mini)
     .title("ApiExample")
+    .backgroundColor($r('app.color.title_background'))
     .menus(this.NavigationMenus)
   }
 }

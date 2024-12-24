@@ -31,6 +31,9 @@
               "action.system.home"
             ]
           }
+        ],
+        "backgroundModes": [
+          "audioRecording"
         ]
       }
     ],
@@ -54,18 +57,30 @@
           ],
           "when": "inuse"
         }
-      }, {
+      },
+      {
         "name": "ohos.permission.MICROPHONE",
         "reason": "$string:mic_reason",
         "usedScene": {
           "abilities": ["EntryAbility"],
           "when": "inuse"
         }
-      }, {
+      },
+      {
         "name": "ohos.permission.CAMERA",
         "reason": "$string:mic_reason",
         "usedScene": {
           "abilities": ["EntryAbility"],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING",
+        "reason": "$string:background_task_reason",
+        "usedScene": {
+          "abilities": [
+            "EntryAbility"
+          ],
           "when": "inuse"
         }
       }
