@@ -27,6 +27,14 @@
     {
       "name": "camera_reason",
       "value": "for video collection"
+    },
+    {
+      "name": "background_task_reason",
+      "value": "for background audio recording"
+    },
+    {
+      "name": "media_statistics_tips",
+      "value": "Tips：本示例仅展示一对一场景下发布订阅后获取本地和远端单路音视频 Track 状态统计的功能。"
     }
   ]
 }
